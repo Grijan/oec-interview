@@ -3,7 +3,6 @@ import { startPlan } from "./api/api";
 import Layout from "./components/Layout/Layout";
 
 const App = () => {
-    console.log('main call of app');
     var navigate = useNavigate();
 
     const start = async () => {

@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
 import ReactSelect from "react-select";
-import { assignUserToProcedure } from '../../../api/api'
+import { assignUserToProcedure, removeUserFromProcedure } from '../../../api/api'
 
 const PlanProcedureItem = ({ procedure, users }) => {
     const [selectedUsers, setSelectedUsers] = useState(null);
-    // console.log(`the procedure ${JSON.stringify(procedure)}`);
-    // console.log(`the users are ${JSON.stringify(users)}`);
-
     // from the users array let's get the users who are assinged and display it
     useEffect(() => {
         if (procedure.userPlanProcedureMapping) {
             const assingedUsers = users.filter(item => {
-                return procedure.userPlanProcedureMapping.some(user => user.userId == item.value)
+                return procedure.userPlanProcedureMapping.some(user => user.userId === item.value)
             });
             setSelectedUsers(assingedUsers);
         }
@@ -19,14 +16,31 @@ const PlanProcedureItem = ({ procedure, users }) => {
     }, []);
     const handleAssignUserToProcedure = async (e) => {
         setSelectedUsers(e);
-        debugger
-        console.log(e);
         const lastSelectedOption = e[e.length - 1];
-        
-        if ((selectedUsers == null) || (e.length > selectedUsers.length)) {
+        if ((selectedUsers === null) || (e.length > selectedUsers.length)) {
             await assignUserToProcedure(procedure.planId, procedure.procedureId,lastSelectedOption.value);
         }
+        else {
+            let removedUserId = null; // if this is null then we are removing all users from the planprocedure
+            if (e.length > 0) {
+                const removedUser = findRemovedUser(selectedUsers,e);
+                removedUserId = removedUser.value;
+            }
+            await removeUserFromProcedure(procedure.planId, procedure.procedureId, removedUserId);
+        }
     };
+
+    function findRemovedUser(originalArray, removedArray) {
+        const removedArrayDict = {};
+        for(const user of removedArray) {
+            removedArrayDict[user.value] = true;
+        }
+        for(const user of originalArray) {
+            if (!removedArrayDict[user.value]) {
+                return user;
+            }
+        }
+    }
 
     return (
         <div className="py-2">

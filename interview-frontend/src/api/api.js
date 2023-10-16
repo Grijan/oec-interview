@@ -18,7 +18,7 @@ export const startPlan = async () => {
 
 export const addProcedureToPlan = async (planId, procedureId) => {
     const url = `${api_url}/Plan/AddProcedureToPlan`;
-    var command = { planId: planId, procedureId: procedureId };
+    const command = { planId: planId, procedureId: procedureId };
     const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -68,7 +68,7 @@ export const getUsers = async () => {
 
 export const assignUserToProcedure = async (planId, procedureId, userId) => {
     const url = `${api_url}/PlanProcedure`;
-    var command = { planId: planId, procedureId: procedureId, userId: userId };
+    const command = { planId: planId, procedureId: procedureId, userId: userId };
     const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -78,7 +78,24 @@ export const assignUserToProcedure = async (planId, procedureId, userId) => {
         body: JSON.stringify(command),
     });
 
-    if (!response.ok) throw new Error("Failed to get plan procedures");
+    if (!response.ok) throw new Error("Failed to assign user to procedure");
+
+    return true;
+}
+
+export const removeUserFromProcedure = async (planId, procedureId, userId) => {
+    const url = `${api_url}/PlanProcedure/RemoveUsersFromProcedure`;
+    const command = { planId: planId, procedureId: procedureId, userId: userId };
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(command),
+    });
+
+    if (!response.ok) throw new Error("Failed to remove user from procedure");
 
     return true;
 }

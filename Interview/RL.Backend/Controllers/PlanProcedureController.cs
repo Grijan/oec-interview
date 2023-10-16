@@ -38,10 +38,11 @@ public class PlanProcedureController : ControllerBase
         return response.ToActionResult();
     }
 
-    [HttpGet("GetMap")]
-    [EnableQuery]
-    public IEnumerable<UserPlanProcedureMapping> test()
+    [HttpDelete("RemoveUsersFromProcedure")]
+    public async Task<IActionResult> RemoveUsersFromProcedure(RemoveUserFromPlanProcedureCommand command, CancellationToken token)
     {
-        return _context.UserPlanProcedureMappings;
+        var response = await _mediator.Send(command, token);
+
+        return response.ToActionResult();
     }
 }
